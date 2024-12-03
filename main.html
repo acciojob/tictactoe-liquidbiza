@@ -1,3 +1,211 @@
 <!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        background: linear-gradient(135deg,#74ebd5, #9face6);
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
 
+      .container{
+        background: #ffffff;
+        box-shadow: 2px 14px 15px rgba(0,0,0,0.2);
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1{
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .input-section input{
+        width: 90%;
+        padding: 10px;
+        margin:10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+
+      .input-section button{
+        width: 95%;
+        padding: 10px;
+        margin-top: 10px;
+        background: #6c63ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .game-section{
+        text-align: center;
+      }
+
+      .message{
+        font-size: 1.2em;
+        color: #6c63ff;
+        margin:10px 0;
+      }
+
+
+
+      .input-section button:hover{
+        background: #574bff;
+      }
+      .board{
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-gap:5px;
+        margin: 20px auto;
+        /* background-color: black; */
+      }
+      
+      .board div{
+        display: flex;
+        color:white;
+        border-radius: 5px;
+        width: 117px;
+        height: 117px;
+        border: 1px solid white;
+        box-shadow: 20px 2px 5px rgba(0,0,0,0.1);
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        background-color: #6c63ff;
+        cursor: pointer;
+      }
+
+      .board div:hover{
+        transform: scale(1.1);
+        background-color: #574bff;
+      }
+
+      @media (max-width:480px){
+        h1{
+          font-size: 1.5em;
+        }
+        .board div{
+          font-size: 1.5em;
+        }
+      }
+
+
+
+    </style>
+  </head>
+  <body>
+      
+      <div class="container">
+        <div class="input-section" id="input-section">
+          <h1>Tic Tac Toe</h1>
+          <input type="text" id="player-1" placeholder="Enter Name 1 Player-1" required>
+          <input type="text" id="player-2" placeholder="Enter Name 1 Player-2" required>
+          <button id="submit">Submit</button>
+        </div>
+        
+        <div class="game-section" id="game-section" style="display:none">
+          <h1>Tic Tac Toe</h1>
+          <div class="message" id="message"></div>
+          <div class="board" id="board"></div>
+        </div>
+      </div>
+      
+      <script>
+        const inputSection = document.getElementById('input-section');
+        const gameSection = document.getElementById('game-section');
+        const boardElement = document.getElementById('board');
+        const messageElement = document.getElementById('message');
+        const submitButton = document.getElementById('submit');
+
+
+        let players = [];
+        let currentPlayerIndex = 0;
+        let board = Array(9).fill(null);
+
+        //winning combi
+
+        const winningCombinations = 
+        [
+          [0,1,2],
+          [3,4,5],
+          [6,7,8],
+          [0,3,6],
+          [1,4,7],
+          [2,5,8],
+          [0,4,8],
+          [2,4,6]
+        ];
+
+        function createBoard(){
+          boardElement.innerHTML = '';
+          for(let i = 0; i < 9; i++){
+            const cell = document.createElement('div');
+            cell.id = i;
+            cell.addEventListener('click', () => handleCellClick(i));
+            boardElement.appendChild(cell);
+          }
+        }
+
+
+        function handleCellClick(index){
+          if(board[index] || checkWinner()) return;
+          
+          if(currentPlayerIndex === 0){
+            board[index] = 'X';
+          }else{
+            board[index] = 'O';
+          }
+          
+          document.getElementById(index).textContent = board[index];
+          if(checkWinner()){
+            messageElement.textContent = `${players[currentPlayerIndex]}, Congrats you won !`;
+          }else if(board.every(cell=>cell)){
+            messageElement.textContent = "It's a Draw";
+          }else{
+            currentPlayerIndex = 1 - currentPlayerIndex;
+            messageElement.textContent = `${players[currentPlayerIndex]}, You are up !`
+          }
+        }
+
+        function checkWinner(){
+          return winningCombinations.some(combination=>
+          combination.every(index => board[index] === (currentPlayerIndex === 0 ? 'X' : 'O'))
+          );
+        }
+
+        submitButton.addEventListener('click', () => {
+          const player1 = document.getElementById('player-1').value.trim();
+          const player2 = document.getElementById('player-2').value.trim();
+          
+          if(!player1 || !player2){
+            alert('Please enter the name of both player');
+            return;
+          }
+          
+          players = [player1, player2];
+          currentPlayerIndex = 0;
+          inputSection.style.display = 'none';
+          gameSection.style.display = 'block';
+          
+          createBoard();
+          
+        })
+      </script>
+  </body>
+</html>
 
